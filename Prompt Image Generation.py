@@ -7,7 +7,7 @@ app = Flask(__name__)
 # Set the endpoint URLs and your RapidAPI Key
 generate_url = "https://arimagesynthesizer.p.rapidapi.com/generate"
 get_url = "https://arimagesynthesizer.p.rapidapi.com/get"
-rapidapi_key = "3efb065e83msh595427bbadd7971p1c291djsnd04bbead05e0"
+rapidapi_key = "YOUR_API_KEY"
 
 
 @app.route('/')
@@ -64,3 +64,19 @@ def generate_image():
     get_response = requests.get(get_url,
                                 headers=get_headers,
                                 params=get_payload)
+
+    if get_response.status_code == 200:
+      image_data = get_response.content
+      image_file_name = "image.png"  # You can customize the file name
+      with open(image_file_name, "wb") as image_file:
+        image_file.write(image_data)
+      return jsonify({'image_url': get_response.url})
+    else:
+      return jsonify({'error': "Failed to fetch the image."})
+  else:
+    return jsonify(
+      {'error': "Failed to generate a hash for the given prompt."})
+
+
+if __name__ == '__main__':
+  app.run(host='0.0.0.0', port=8080)
